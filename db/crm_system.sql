@@ -11,7 +11,7 @@
  Target Server Version : 90200
  File Encoding         : 65001
 
- Date: 05/04/2026 21:13:24
+ Date: 06/04/2026 12:19:09
 */
 
 SET NAMES utf8mb4;
@@ -494,10 +494,10 @@ CREATE TABLE `products`  (
   INDEX `fk_products_uom`(`uom_id`) USING BTREE,
   INDEX `fk_products_created_by`(`created_by`) USING BTREE,
   INDEX `fk_products_updated_by`(`updated_by`) USING BTREE,
-  CONSTRAINT `fk_products_uom` FOREIGN KEY (`uom_id`) REFERENCES `uoms` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_products_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `fk_products_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `fk_products_uom` FOREIGN KEY (`uom_id`) REFERENCES `uoms` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `fk_products_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -566,6 +566,23 @@ CREATE TABLE `system_settings`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for task_notes
+-- ----------------------------
+DROP TABLE IF EXISTS `task_notes`;
+CREATE TABLE `task_notes`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `task_id` int NOT NULL,
+  `user_id` int NOT NULL COMMENT 'Người viết ghi chú',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `fk_notes_task`(`task_id`) USING BTREE,
+  INDEX `fk_notes_user`(`user_id`) USING BTREE,
+  CONSTRAINT `fk_notes_task` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `fk_notes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for tasks
 -- ----------------------------
 DROP TABLE IF EXISTS `tasks`;
@@ -577,6 +594,8 @@ CREATE TABLE `tasks`  (
   `start_date` datetime(0) NULL DEFAULT NULL,
   `end_date` datetime(0) NULL DEFAULT NULL,
   `status` enum('PENDING','COMPLETED','CANCELED') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'PENDING',
+  `extension_count` int NULL DEFAULT 0,
+  `is_overdue` tinyint(1) NULL DEFAULT 0,
   `assigned_to` int NULL DEFAULT NULL,
   `relate_type` enum('LEAD','CUSTOMER','OPPORTUNITY','FEEDBACK') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `relate_id` int NULL DEFAULT NULL,
