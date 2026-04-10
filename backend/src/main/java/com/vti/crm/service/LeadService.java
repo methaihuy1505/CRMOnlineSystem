@@ -3,14 +3,8 @@ package com.vti.crm.service;
 import com.vti.crm.dto.request.LeadCreateRequest;
 import com.vti.crm.dto.request.LeadUpdateRequest;
 import com.vti.crm.dto.response.LeadResponse;
-import com.vti.crm.entity.CommunicationDetail;
-import com.vti.crm.entity.Lead;
-import com.vti.crm.entity.LeadInterest;
-import com.vti.crm.entity.LeadStatus;
-import com.vti.crm.repository.CommunicationDetailRepository;
-import com.vti.crm.repository.LeadInterestRepository;
-import com.vti.crm.repository.LeadRepository;
-import com.vti.crm.repository.LeadStatusRepository;
+import com.vti.crm.entity.*;
+import com.vti.crm.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +20,9 @@ public class LeadService {
     private final LeadInterestRepository leadInterestRepository;
     private final CommunicationDetailRepository communicationDetailRepository;
 
-    // ==========================================
-    // 1. CÁC HÀM CHÍNH (PUBLIC API)
-    // ==========================================
+    // Inject thêm Repo để dùng getReferenceById
+    private final SourceRepository sourceRepository;
+    private final CampaignRepository campaignRepository;
 
     @Transactional
     public LeadResponse createLead(LeadCreateRequest request) {
@@ -52,25 +46,19 @@ public class LeadService {
 
     @Transactional
     public LeadResponse updateLead(Integer id, LeadUpdateRequest request) {
-        // 1. Cập nhật thông tin cơ bản của Lead
         Lead updatedLead = findAndMapUpdateLeadInfo(id, request);
 
-        // 2. Cập nhật Products (Xóa sạch cái cũ, tạo lại cái mới)
         leadInterestRepository.deleteByLeadId(id);
         saveLeadInterests(updatedLead, request.getProductInterestIds());
 
-        // 3. Cập nhật Liên lạc (Nghiệp vụ: Giáng cấp cũ thành phụ, lưu mới thành chính)
         updateCommunicationDetails(updatedLead, request.getPhone(), request.getEmail());
 
         return mapToResponse(updatedLead);
     }
 
-    // ==========================================
-    // 2. CÁC HÀM MAP DỮ LIỆU LEAD (PRIVATE)
-    // ==========================================
-
     private Lead mapAndSaveLeadInfo(LeadCreateRequest request) {
         Lead newLead = new Lead();
+        // Map thông tin cơ bản
         newLead.setFullName(request.getFullName());
         newLead.setCompanyName(request.getCompanyName());
         newLead.setPhone(request.getPhone());
@@ -82,17 +70,20 @@ public class LeadService {
         newLead.setExpectedRevenue(request.getExpectedRevenue());
         newLead.setDescription(request.getDescription());
 
+        // Map khóa ngoại qua Object (Chuẩn Join)
+        if (request.getSourceId() != null) {
+            newLead.setSource(sourceRepository.getReferenceById(request.getSourceId()));
+        }
+        if (request.getCampaignId() != null) {
+            newLead.setCampaign(campaignRepository.getReferenceById(request.getCampaignId()));
+        }
+        if (request.getStatusId() != null) {
+            newLead.setStatus(leadStatusRepository.getReferenceById(request.getStatusId()));
+        }
+
         newLead.setProvinceId(request.getProvinceId());
         newLead.setBranchId(request.getBranchId());
-        newLead.setSourceId(request.getSourceId());
-        newLead.setCampaignId(request.getCampaignId());
         newLead.setAssignedTo(request.getAssignedTo());
-
-        if (request.getStatusId() != null) {
-            LeadStatus status = leadStatusRepository.findById(request.getStatusId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái Lead có ID: " + request.getStatusId()));
-            newLead.setStatus(status);
-        }
 
         return leadRepository.save(newLead);
     }
@@ -110,39 +101,41 @@ public class LeadService {
         existingLead.setExpectedRevenue(request.getExpectedRevenue());
         existingLead.setDescription(request.getDescription());
 
-        existingLead.setProvinceId(request.getProvinceId());
-        existingLead.setBranchId(request.getBranchId());
-        existingLead.setSourceId(request.getSourceId());
-        existingLead.setCampaignId(request.getCampaignId());
-        existingLead.setAssignedTo(request.getAssignedTo());
+        // Cập nhật khóa ngoại qua Object
+        if (request.getSourceId() != null) {
+            existingLead.setSource(sourceRepository.getReferenceById(request.getSourceId()));
+        } else {
+            existingLead.setSource(null);
+        }
+
+        if (request.getCampaignId() != null) {
+            existingLead.setCampaign(campaignRepository.getReferenceById(request.getCampaignId()));
+        } else {
+            existingLead.setCampaign(null);
+        }
 
         if (request.getStatusId() != null) {
-            LeadStatus status = leadStatusRepository.findById(request.getStatusId())
-                    .orElseThrow(() -> new RuntimeException("Trạng thái không hợp lệ"));
-            existingLead.setStatus(status);
+            existingLead.setStatus(leadStatusRepository.getReferenceById(request.getStatusId()));
         }
+
+        existingLead.setProvinceId(request.getProvinceId());
+        existingLead.setBranchId(request.getBranchId());
+        existingLead.setAssignedTo(request.getAssignedTo());
 
         return leadRepository.save(existingLead);
     }
 
-    // ==========================================
-    // 3. CÁC HÀM XỬ LÝ NGHIỆP VỤ PHỤ (PRIVATE)
-    // ==========================================
-
     private void saveLeadInterests(Lead lead, List<Integer> productIds) {
         if (productIds == null || productIds.isEmpty()) return;
-
         List<LeadInterest> interests = productIds.stream().map(productId -> {
             LeadInterest interest = new LeadInterest();
             interest.setLead(lead);
             interest.setProductId(productId);
             return interest;
         }).toList();
-
         leadInterestRepository.saveAll(interests);
     }
 
-    // Dùng cho hàm Create
     private void saveCommunicationDetails(Lead lead, String phone, String email) {
         if (phone != null && !phone.trim().isEmpty()) {
             createNewCommDetail(lead, phone, CommunicationDetail.CommType.PHONE, "Số chính");
@@ -152,7 +145,6 @@ public class LeadService {
         }
     }
 
-    // Dùng cho hàm Update
     private void updateCommunicationDetails(Lead lead, String newPhone, String newEmail) {
         if (newPhone != null && !newPhone.trim().isEmpty()) {
             handleCommUpdate(lead, newPhone, CommunicationDetail.CommType.PHONE, "Số chính", "Số phụ");
@@ -169,12 +161,10 @@ public class LeadService {
 
         if (currentPrimaryOpt.isPresent()) {
             CommunicationDetail currentPrimary = currentPrimaryOpt.get();
-            // Chỉ cập nhật nếu user nhập số mới khác số cũ
             if (!currentPrimary.getCommValue().equals(newValue)) {
                 currentPrimary.setIsPrimary(false);
                 currentPrimary.setLabel(secondaryLabel);
                 communicationDetailRepository.save(currentPrimary);
-
                 createNewCommDetail(lead, newValue, type, primaryLabel);
             }
         } else {
@@ -201,9 +191,33 @@ public class LeadService {
                 .companyName(lead.getCompanyName())
                 .phone(lead.getPhone())
                 .email(lead.getEmail())
-                .statusName(lead.getStatus() != null ? lead.getStatus().getName() : null)
+                .website(lead.getWebsite())
+                .taxCode(lead.getTaxCode())
+                .citizenId(lead.getCitizenId())
+                .address(lead.getAddress())
                 .expectedRevenue(lead.getExpectedRevenue())
+                .description(lead.getDescription())
+                .totalCalls(lead.getTotalCalls())
+                .totalEmails(lead.getTotalEmails())
+                .totalMeetings(lead.getTotalMeetings())
+
+                // Trả về cả ID và Tên cho FE (Lấy từ Object Join)
+                .sourceId(lead.getSource() != null ? lead.getSource().getId() : null)
+                .sourceName(lead.getSource() != null ? lead.getSource().getName() : "Tự nhiên")
+
+                .campaignId(lead.getCampaign() != null ? lead.getCampaign().getId() : null)
+                .campaignName(lead.getCampaign() != null ? lead.getCampaign().getName() : null)
+
+                .statusId(lead.getStatus() != null ? lead.getStatus().getId() : null)
+                .statusName(lead.getStatus() != null ? lead.getStatus().getName() : null)
+
+                .provinceId(lead.getProvinceId())
+                .branchId(lead.getBranchId())
+                .assignedTo(lead.getAssignedTo())
+                .createdBy(lead.getCreatedBy())
+                .updatedBy(lead.getUpdatedBy())
                 .createdAt(lead.getCreatedAt())
+                .updatedAt(lead.getUpdatedAt())
                 .build();
     }
 }

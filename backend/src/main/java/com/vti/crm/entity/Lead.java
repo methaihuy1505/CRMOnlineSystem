@@ -45,11 +45,13 @@ public class Lead {
     @Column(name = "branch_id")
     private Integer branchId;
 
-    @Column(name = "source_id")
-    private Integer sourceId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "source_id")
+    private Source source;
 
-    @Column(name = "campaign_id")
-    private Integer campaignId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "campaign_id")
+    private Campaign campaign;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id")
