@@ -14,7 +14,9 @@ public class LeadUpdateRequest {
     private String website;
     private String address;
 
-    // Các trường khóa ngoại cần cập nhật
+    private String taxCode;
+    private String citizenId;
+
     private Integer provinceId;
     private Integer branchId;
     private Integer sourceId;

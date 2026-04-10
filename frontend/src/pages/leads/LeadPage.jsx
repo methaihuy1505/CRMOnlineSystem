@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import LeadFormModal from "./LeadFormModal";
+import { useNavigate } from "react-router-dom";
 
 const LeadPage = () => {
+  const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
-  // Bổ sung state lưu danh mục để bộ lọc chạy được
+
   const [sources, setSources] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
-
+  const [statuses, setStatuses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
@@ -30,14 +32,16 @@ const LeadPage = () => {
   const fetchInitialData = async () => {
     try {
       // Gọi đồng thời cả danh sách Lead và các danh mục cho bộ lọc
-      const [leadRes, srcRes, camRes] = await Promise.all([
+      const [leadRes, srcRes, camRes, statusRes] = await Promise.all([
         axios.get("http://localhost:8080/api/v1/leads"),
         axios.get("http://localhost:8080/api/v1/sources"),
         axios.get("http://localhost:8080/api/v1/campaigns"),
+        axios.get("http://localhost:8080/api/v1/lead-statuses"),
       ]);
       setLeads(leadRes.data);
       setSources(srcRes.data);
       setCampaigns(camRes.data);
+      setStatuses(statusRes.data);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
     } finally {
@@ -127,6 +131,10 @@ const LeadPage = () => {
   );
   const totalEmails = filteredLeads.reduce(
     (sum, lead) => sum + (lead.totalEmails || 0),
+    0,
+  );
+  const totalExpectedRevenue = filteredLeads.reduce(
+    (sum, lead) => sum + (Number(lead.expectedRevenue) || 0),
     0,
   );
 
@@ -223,11 +231,12 @@ const LeadPage = () => {
               onChange={handleFilterChange}
               className="w-full bg-surface-container-lowest border-none rounded-lg text-sm px-4 py-2.5 focus:ring-1 focus:ring-primary/20"
             >
-              <option value="">Tất cả Trạng thái</option>
-              <option value="1">Mới</option>
-              <option value="2">Đang liên hệ</option>
-              <option value="3">Tiềm năng</option>
-              <option value="4">Đã chuyển đổi</option>
+              <option value="">Tất cả</option>
+              {statuses.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex items-end gap-2">
@@ -342,7 +351,29 @@ const LeadPage = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-emerald-500 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+              Doanh thu dự kiến
+            </p>
+            <h3 className="text-2xl font-headline font-extrabold text-primary mt-1">
+              {formatCurrency(totalExpectedRevenue)}
+            </h3>
+            <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+              <span className="material-symbols-outlined text-xs">
+                payments
+              </span>
+              Tổng giá trị tiềm năng
+            </p>
+          </div>
+          <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-emerald-600">
+              monetization_on
+            </span>
+          </div>
+        </div>
+
         <div className="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-primary shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
@@ -354,7 +385,7 @@ const LeadPage = () => {
             <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">
                 trending_up
-              </span>{" "}
+              </span>
               Dựa trên kết quả lọc
             </p>
           </div>
@@ -362,6 +393,7 @@ const LeadPage = () => {
             <span className="material-symbols-outlined text-primary">call</span>
           </div>
         </div>
+
         <div className="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-secondary-container shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
@@ -373,7 +405,7 @@ const LeadPage = () => {
             <p className="text-xs text-on-surface-variant mt-1 flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">
                 schedule
-              </span>{" "}
+              </span>
               Lịch hẹn đã hoàn tất
             </p>
           </div>
@@ -383,6 +415,7 @@ const LeadPage = () => {
             </span>
           </div>
         </div>
+
         <div className="bg-surface-container-lowest p-6 rounded-xl border-l-4 border-on-primary-container shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
@@ -392,7 +425,7 @@ const LeadPage = () => {
               {totalEmails}
             </h3>
             <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-              <span className="material-symbols-outlined text-xs">bolt</span>{" "}
+              <span className="material-symbols-outlined text-xs">bolt</span>
               Chiến dịch tiếp thị
             </p>
           </div>
@@ -535,6 +568,7 @@ const LeadPage = () => {
                     <td className="sticky right-0 z-10 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors px-6 py-5 shadow-[-8px_0_10px_-4px_rgba(0,0,0,0.05)]">
                       <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
+                          onClick={() => navigate(`/leads/${lead.id}`)} // Điều hướng sang trang chi tiết
                           className="p-1.5 hover:bg-surface-container-high rounded-md text-on-surface-variant"
                           title="Xem chi tiết"
                         >

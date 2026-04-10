@@ -31,6 +31,13 @@ public class LeadController {
         return ResponseEntity.ok(leads);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<LeadResponse> getLeadById(@PathVariable Integer id) {
+        LeadResponse response = leadService.getLeadById(id);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<LeadResponse> updateLead(
             @PathVariable Integer id,

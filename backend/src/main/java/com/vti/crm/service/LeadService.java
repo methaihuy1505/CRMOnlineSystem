@@ -56,6 +56,16 @@ public class LeadService {
         return mapToResponse(updatedLead);
     }
 
+    // Thêm hàm này vào class LeadService
+    public LeadResponse getLeadById(Integer id) {
+        // Tìm lead theo ID, nếu không thấy thì quăng lỗi Runtime
+        Lead lead = leadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng tiềm năng với ID: " + id));
+
+        // Sử dụng hàm mapToResponse chuẩn Join bạn đã có để trả về DTO
+        return mapToResponse(lead);
+    }
+
     private Lead mapAndSaveLeadInfo(LeadCreateRequest request) {
         Lead newLead = new Lead();
         // Map thông tin cơ bản
@@ -70,7 +80,7 @@ public class LeadService {
         newLead.setExpectedRevenue(request.getExpectedRevenue());
         newLead.setDescription(request.getDescription());
 
-        // Map khóa ngoại qua Object (Chuẩn Join)
+        // Map khóa ngoại qua Object (
         if (request.getSourceId() != null) {
             newLead.setSource(sourceRepository.getReferenceById(request.getSourceId()));
         }
@@ -92,39 +102,45 @@ public class LeadService {
         Lead existingLead = leadRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Lead với ID: " + id));
 
+        // --- Thông tin cơ bản ---
         existingLead.setFullName(request.getFullName());
         existingLead.setCompanyName(request.getCompanyName());
         existingLead.setPhone(request.getPhone());
         existingLead.setEmail(request.getEmail());
         existingLead.setWebsite(request.getWebsite());
         existingLead.setAddress(request.getAddress());
+        existingLead.setTaxCode(request.getTaxCode());
+        existingLead.setCitizenId(request.getCitizenId());
         existingLead.setExpectedRevenue(request.getExpectedRevenue());
         existingLead.setDescription(request.getDescription());
 
-        // Cập nhật khóa ngoại qua Object
+        // --- Cập nhật khóa ngoại qua Object (Proxy) ---
+        // Source
         if (request.getSourceId() != null) {
             existingLead.setSource(sourceRepository.getReferenceById(request.getSourceId()));
         } else {
             existingLead.setSource(null);
         }
 
+        // Campaign
         if (request.getCampaignId() != null) {
             existingLead.setCampaign(campaignRepository.getReferenceById(request.getCampaignId()));
         } else {
             existingLead.setCampaign(null);
         }
 
+        // Status
         if (request.getStatusId() != null) {
             existingLead.setStatus(leadStatusRepository.getReferenceById(request.getStatusId()));
         }
 
+        // Các ID khác
         existingLead.setProvinceId(request.getProvinceId());
         existingLead.setBranchId(request.getBranchId());
         existingLead.setAssignedTo(request.getAssignedTo());
 
         return leadRepository.save(existingLead);
     }
-
     private void saveLeadInterests(Lead lead, List<Integer> productIds) {
         if (productIds == null || productIds.isEmpty()) return;
         List<LeadInterest> interests = productIds.stream().map(productId -> {
