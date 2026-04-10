@@ -19,6 +19,7 @@ public class LeadStatusController {
 
     @GetMapping
     public List<LeadStatus> getAllStatuses() {
-        return leadStatusRepository.findAll();
+        // Chỉ lấy các trạng thái đang Active
+        return leadStatusRepository.findByIsActiveTrue();
     }
 }

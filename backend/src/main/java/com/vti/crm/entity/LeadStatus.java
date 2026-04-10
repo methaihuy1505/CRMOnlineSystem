@@ -13,4 +13,7 @@ public class LeadStatus {
 
     @Column(nullable = false, length = 50)
     private String name;
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Button from "../../components/ui/Button";
 
 const LeadFormModal = ({ isOpen, onClose, onSave, currentLead }) => {
   const [formData, setFormData] = useState({
@@ -77,16 +78,31 @@ const LeadFormModal = ({ isOpen, onClose, onSave, currentLead }) => {
 
   const validateForm = () => {
     let newErrors = {};
+
     if (!formData.fullName || formData.fullName.trim() === "") {
       newErrors.fullName = "Họ và tên không được để trống";
     }
-    // Strict 10-digit check
+
     if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
       newErrors.phone = "Số điện thoại phải đúng 10 chữ số";
     }
+
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email không đúng định dạng";
     }
+
+    if (
+      formData.taxCode &&
+      !/^(\d{10}|\d{12}|\d{13})$/.test(formData.taxCode)
+    ) {
+      newErrors.taxCode =
+        "Mã số thuế chỉ được chứa số và có độ dài 10, 12 hoặc 13 ký tự";
+    }
+
+    if (formData.citizenId && !/^\d{12}$/.test(formData.citizenId)) {
+      newErrors.citizenId = "CCCD phải bao gồm đúng 12 chữ số";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -144,12 +160,12 @@ const LeadFormModal = ({ isOpen, onClose, onSave, currentLead }) => {
             </span>
             {currentLead ? "Cập nhật Khách hàng" : "Thêm Khách hàng mới"}
           </h3>
-          <button
+          <Button
+            variant="iconOnly"
+            icon="close"
             onClick={onClose}
-            className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
+            className="text-on-surface-variant"
+          />
         </div>
 
         <form
@@ -200,8 +216,13 @@ const LeadFormModal = ({ isOpen, onClose, onSave, currentLead }) => {
                   name="taxCode"
                   value={formData.taxCode}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg outline-none"
+                  className={`w-full px-4 py-2 border rounded-lg outline-none ${errors.taxCode ? "border-error" : ""}`}
                 />
+                {errors.taxCode && (
+                  <p className="text-error text-[10px] italic">
+                    {errors.taxCode}
+                  </p>
+                )}
               </div>
               <div className="space-y-1.5">
                 <label className="block text-[11px] font-bold text-on-surface-variant uppercase">
@@ -212,8 +233,13 @@ const LeadFormModal = ({ isOpen, onClose, onSave, currentLead }) => {
                   name="citizenId"
                   value={formData.citizenId}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg outline-none"
+                  className={`w-full px-4 py-2 border rounded-lg outline-none ${errors.citizenId ? "border-error" : ""}`}
                 />
+                {errors.citizenId && (
+                  <p className="text-error text-[10px] italic">
+                    {errors.citizenId}
+                  </p>
+                )}
               </div>
               <div className="space-y-1.5">
                 <label className="block text-[11px] font-bold text-on-surface-variant uppercase">
@@ -374,21 +400,17 @@ const LeadFormModal = ({ isOpen, onClose, onSave, currentLead }) => {
         </form>
 
         <div className="px-6 py-4 border-t border-surface-variant bg-surface-container-lowest flex justify-end gap-3 sticky bottom-0 z-10">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-6 py-2.5 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors"
-          >
+          <Button type="button" variant="cancel" onClick={onClose}>
             Hủy bỏ
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             form="leadForm"
             disabled={isSaving}
-            className="px-8 py-2.5 rounded-lg font-bold text-white bg-primary hover:bg-[#1A237E] shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+            variant="primary"
           >
             {isSaving ? "Đang lưu..." : "Lưu Khách Hàng"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ public class SourceController {
 
     @GetMapping
     public List<Source> getAllSources() {
-        return sourceRepository.findAll();
+        // Chỉ lấy các nguồn đang Active
+        return sourceRepository.findByIsActiveTrue();
     }
 }

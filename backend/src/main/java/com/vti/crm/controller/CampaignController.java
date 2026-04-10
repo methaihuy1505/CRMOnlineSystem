@@ -1,11 +1,12 @@
 package com.vti.crm.controller;
 
-import com.vti.crm.entity.Campaign;
-import com.vti.crm.repository.CampaignRepository;
+import com.vti.crm.dto.request.CampaignRequest;
+import com.vti.crm.dto.response.CampaignResponse;
+import com.vti.crm.service.CampaignService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,10 +15,33 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CampaignController {
 
-    private final CampaignRepository campaignRepository;
+    private final CampaignService campaignService;
 
     @GetMapping
-    public List<Campaign> getAllCampaigns() {
-        return campaignRepository.findAll();
+    public ResponseEntity<List<CampaignResponse>> getAllCampaigns() {
+        return ResponseEntity.ok(campaignService.getAllCampaigns());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CampaignResponse> getCampaignById(@PathVariable Integer id) {
+        return ResponseEntity.ok(campaignService.getCampaignById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<CampaignResponse> createCampaign(@RequestBody CampaignRequest request) {
+        return new ResponseEntity<>(campaignService.createCampaign(request), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CampaignResponse> updateCampaign(
+            @PathVariable Integer id,
+            @RequestBody CampaignRequest request) {
+        return ResponseEntity.ok(campaignService.updateCampaign(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCampaign(@PathVariable Integer id) {
+        campaignService.deleteCampaign(id);
+        return ResponseEntity.noContent().build();
     }
 }

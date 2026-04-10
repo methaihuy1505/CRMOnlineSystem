@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import LeadFormModal from "./LeadFormModal"; // Import Modal để chỉnh sửa
+import LeadFormModal from "./LeadFormModal";
+import Button from "../../components/ui/Button"; // Import Button
+import { formatCurrency } from "../../utils/formatters"; // Import formatter
 
 const LeadDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [lead, setLead] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // State điều khiển đóng/mở Modal chỉnh sửa
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchLeadDetail = async () => {
@@ -32,7 +32,6 @@ const LeadDetailPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Profile */}
       <div className="bg-white rounded-2xl shadow-sm p-6 border border-outline-variant/10">
         <div className="flex flex-col md:flex-row justify-between gap-6">
           <div className="flex gap-4">
@@ -57,28 +56,27 @@ const LeadDetailPage = () => {
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <button
+            {/* Sử dụng component Button thay vì code cứng */}
+            <Button
+              variant="cancel"
+              icon="arrow_back"
               onClick={() => navigate(-1)}
-              className="px-4 py-2 border rounded-lg font-bold flex items-center gap-2 hover:bg-slate-50 transition-colors"
+              className="border border-outline-variant hover:bg-slate-50"
             >
-              <span className="material-symbols-outlined text-sm">
-                arrow_back
-              </span>{" "}
               Quay lại
-            </button>
-            <button
-              onClick={() => setIsModalOpen(true)} // Mở modal khi nhấn chỉnh sửa
-              className="px-4 py-2 bg-primary text-white rounded-lg font-bold flex items-center gap-2 shadow-lg hover:bg-[#1A237E] transition-all active:scale-95"
+            </Button>
+            <Button
+              variant="primary"
+              icon="edit"
+              onClick={() => setIsModalOpen(true)}
             >
-              <span className="material-symbols-outlined text-sm">edit</span>{" "}
               Chỉnh sửa
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Cột trái: Thông tin chi tiết */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden">
             <div className="px-6 py-4 border-b font-bold text-primary bg-slate-50">
@@ -92,14 +90,11 @@ const LeadDetailPage = () => {
                 label="CMND/CCCD"
                 value={lead.citizenId}
               />
+              {/* Dùng formatCurrency dùng chung */}
               <InfoItem
                 icon="payments"
                 label="Doanh thu dự kiến"
-                value={
-                  lead.expectedRevenue
-                    ? `${new Intl.NumberFormat("vi-VN").format(lead.expectedRevenue)} VNĐ`
-                    : "Chưa cập nhật"
-                }
+                value={formatCurrency(lead.expectedRevenue)}
               />
               <InfoItem
                 icon="public"
@@ -112,8 +107,6 @@ const LeadDetailPage = () => {
                 value={lead.address || "---"}
               />
               <InfoItem icon="share" label="Nguồn" value={lead.sourceName} />
-
-              {/* PHẦN NGƯỜI ĐẢM NHẬN CHĂM SÓC */}
               <InfoItem
                 icon="person"
                 label="Người đảm nhận"
@@ -123,7 +116,6 @@ const LeadDetailPage = () => {
                     : "Chưa giao cho ai"
                 }
               />
-
               <InfoItem
                 icon="event"
                 label="Ngày tạo"
@@ -140,7 +132,6 @@ const LeadDetailPage = () => {
           </div>
         </div>
 
-        {/* Cột phải: Thống kê tương tác */}
         <div className="space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-outline-variant/10 p-6">
             <h4 className="font-bold text-on-surface mb-6">
@@ -170,11 +161,10 @@ const LeadDetailPage = () => {
         </div>
       </div>
 
-      {/* Nhúng Modal chỉnh sửa giống LeadPage */}
       <LeadFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSave={fetchLeadDetail} // Sau khi lưu thì gọi lại hàm fetch detail để cập nhật UI
+        onSave={fetchLeadDetail}
         currentLead={lead}
       />
     </div>

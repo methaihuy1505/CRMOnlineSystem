@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+@org.hibernate.annotations.SQLRestriction("deleted_at IS NULL")
 @Entity
 @Table(name = "leads")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -29,10 +29,10 @@ public class Lead {
     @Column(length = 100)
     private String website;
 
-    @Column(name = "tax_code", length = 50)
+    @Column(name = "tax_code", length = 20)
     private String taxCode;
 
-    @Column(name = "citizen_id", length = 50)
+    @Column(name = "citizen_id", length = 20)
     private String citizenId;
 
     @Column(columnDefinition = "TEXT")
@@ -87,6 +87,9 @@ public class Lead {
 
     @Column(name = "updated_by")
     private Integer updatedBy;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @PrePersist
     protected void onCreate() {

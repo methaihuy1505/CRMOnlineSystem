@@ -3,7 +3,6 @@ package com.vti.crm.controller;
 import com.vti.crm.dto.request.LeadCreateRequest;
 import com.vti.crm.dto.request.LeadUpdateRequest;
 import com.vti.crm.dto.response.LeadResponse;
-import com.vti.crm.entity.Lead;
 import com.vti.crm.service.LeadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,5 +43,11 @@ public class LeadController {
             @RequestBody LeadUpdateRequest request) {
         LeadResponse response = leadService.updateLead(id, request);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLead(@PathVariable Integer id) {
+        leadService.deleteLead(id);
+        return ResponseEntity.noContent().build(); // Trả về 204 No Content cho Delete
     }
 }

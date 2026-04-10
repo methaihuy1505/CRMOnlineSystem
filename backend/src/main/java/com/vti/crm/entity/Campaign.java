@@ -3,7 +3,9 @@ package com.vti.crm.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@org.hibernate.annotations.SQLRestriction("deleted_at IS NULL")
 @Entity
 @Table(name = "campaigns")
 @Getter
@@ -25,4 +27,7 @@ public class Campaign {
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

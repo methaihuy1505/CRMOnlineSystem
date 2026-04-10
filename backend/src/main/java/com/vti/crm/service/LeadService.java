@@ -19,8 +19,6 @@ public class LeadService {
     private final LeadStatusRepository leadStatusRepository;
     private final LeadInterestRepository leadInterestRepository;
     private final CommunicationDetailRepository communicationDetailRepository;
-
-    // Inject thêm Repo để dùng getReferenceById
     private final SourceRepository sourceRepository;
     private final CampaignRepository campaignRepository;
 
@@ -65,6 +63,19 @@ public class LeadService {
         // Sử dụng hàm mapToResponse chuẩn Join bạn đã có để trả về DTO
         return mapToResponse(lead);
     }
+
+    @Transactional
+    public void deleteLead(Integer id) {
+        Lead existingLead = leadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Lead với ID: " + id));
+
+        existingLead.setDeletedAt(java.time.LocalDateTime.now());
+        // Cập nhật người xóa (chưa có entity user)
+        // existingLead.setUpdatedBy(currentUser.getId());
+
+        leadRepository.save(existingLead);
+    }
+
 
     private Lead mapAndSaveLeadInfo(LeadCreateRequest request) {
         Lead newLead = new Lead();
