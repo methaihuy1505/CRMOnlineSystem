@@ -7,7 +7,7 @@ import lombok.*;
 @Table(name = "product_images")
 @Getter
 @Setter
-public class Product_images {
+public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class Product_images {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Products product;
+    private Product product;
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;

@@ -6,7 +6,7 @@ import lombok.*;
 @Table(name = "opportunity_stages")
 @Getter
 @Setter
-public class Opportunity_stages {
+public class OpportunityStage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

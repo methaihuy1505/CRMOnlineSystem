@@ -6,7 +6,7 @@ import lombok.*;
 @Table(name = "opportunities")
 @Getter
 @Setter
-public class Opportunities extends BaseEntity {
+public class Opportunity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,15 +22,15 @@ public class Opportunities extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "stage_id")
-    private Opportunity_stages stage;
+    private OpportunityStage stage;
 
     @ManyToOne
     @JoinColumn(name = "status_id")
-    private Opportunity_status status;
+    private OpportunityStatus status;
 
     @ManyToOne
     @JoinColumn(name = "lost_reason_id")
-    private Lost_reasons lostReason;
+    private LostReason lostReason;
 
     @Column(name = "total_amount")
     private Double totalAmount;

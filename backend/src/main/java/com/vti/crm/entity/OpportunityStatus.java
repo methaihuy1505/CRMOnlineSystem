@@ -3,11 +3,12 @@ package com.vti.crm.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity
-@Table(name = "lost_reasons")
+@Table(name = "opportunity_status")
 @Getter
 @Setter
-public class Lost_reasons {
+public class OpportunityStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +17,6 @@ public class Lost_reasons {
     private String code;
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "is_final")
+    private Boolean isFinal;
 }

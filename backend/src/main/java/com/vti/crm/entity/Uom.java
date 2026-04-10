@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Uoms extends BaseEntity {
+public class Uom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
