@@ -1,0 +1,274 @@
+{
+  "info": {
+    "name": " CRM Online System API - Focus (Tasks, Notes, Activities)",
+    "description": "Collection tập trung vào 3 thực thể chính đã có dữ liệu mẫu: Tasks, Task Notes, và Activities.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Get All Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/tasks",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["tasks"]
+            }
+          }
+        },
+        {
+          "name": "Get Task by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/tasks/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["tasks", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Gửi báo giá cho khách hàng mới\",\n  \"description\": \"Cần gửi báo giá phần mềm CRM bản Pro\",\n  \"priority\": \"HIGH\",\n  \"startDate\": \"2024-11-01T09:00:00\",\n  \"endDate\": \"2024-11-05T17:00:00\",\n  \"status\": \"PENDING\",\n  \"assignedTo\": 3,\n  \"relateType\": \"CUSTOMER\",\n  \"relateId\": 1,\n  \"createdBy\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/tasks",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["tasks"]
+            }
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\",\n  \"isOverdue\": false,\n  \"extensionCount\": 1,\n  \"description\": \"Đã xử lý xong, báo giá được gửi thành công.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/tasks/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["tasks", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/tasks/5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["tasks", "5"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Task Notes",
+      "item": [
+        {
+          "name": "Get Notes By Task ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/task-notes/task/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["task-notes", "task", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Task Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taskId\": 1,\n  \"userId\": 1,\n  \"content\": \"Ghi chú mới: Cần check lại email của khách trước khi gửi báo giá.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/task-notes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["task-notes"]
+            }
+          }
+        },
+        {
+          "name": "Update Task Note",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Đã check email, chính xác là: admin@congtyA.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/task-notes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["task-notes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Notes By Task ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/task-notes/task/5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["task-notes", "task", "5"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activities",
+      "item": [
+        {
+          "name": "Get All Activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/activities",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["activities"]
+            }
+          }
+        },
+        {
+          "name": "Get Activity by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/activities/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["activities", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taskId\": 1,\n  \"parentId\": 1,\n  \"parentType\": \"LEAD\",\n  \"contactId\": 1,\n  \"activityType\": \"CALL\",\n  \"subject\": \"Cuộc gọi chốt sale\",\n  \"description\": \"Khách đồng ý mua gói 1 năm\",\n  \"duration\": 30,\n  \"activityDate\": \"2024-11-02T14:00:00\",\n  \"status\": \"HELD\",\n  \"assignedTo\": 3,\n  \"createdBy\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/activities",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["activities"]
+            }
+          }
+        },
+        {
+          "name": "Update Activity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"NOT_HELD\",\n  \"duration\": 0,\n  \"description\": \"Khách bận đột xuất, hẹn tuần sau.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/activities/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["activities", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Activity",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/activities/5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["activities", "5"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
