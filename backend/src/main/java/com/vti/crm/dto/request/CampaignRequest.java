@@ -16,7 +16,11 @@ public class CampaignRequest {
 
     private String name;
 
+    private String description;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+
 }

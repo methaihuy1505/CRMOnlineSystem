@@ -22,6 +22,9 @@ public class Campaign {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
     @Column(name = "start_date")
     private LocalDate startDate;
 

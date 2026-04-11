@@ -5,6 +5,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@org.hibernate.annotations.SQLRestriction("deleted_at IS NULL")
 @Entity
 @Table(name = "customers")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -28,6 +29,9 @@ public class Customer {
 
     @Column(name = "tax_code", length = 50)
     private String taxCode;
+
+    @Column(name = "citizen_id", length = 20)
+    private String citizenId;
 
     @Column(name = "founded_date")
     private LocalDate foundedDate;
@@ -57,6 +61,9 @@ public class Customer {
     @Column(name = "source_id")
     private Integer sourceId;
 
+    @Column(name = "campaign_id")
+    private Integer campaignId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id")
     private CustomerStatus status;
@@ -70,6 +77,9 @@ public class Customer {
 
     @Column(name = "branch_id")
     private Integer branchId;
+
+    @Column(name = "province_id")
+    private Integer provinceId;
 
     @Column(name = "assigned_user_id")
     private Integer assignedUserId;
@@ -86,6 +96,9 @@ public class Customer {
 
     @Column(name = "updated_by")
     private Integer updatedBy;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @PrePersist
     protected void onCreate() {

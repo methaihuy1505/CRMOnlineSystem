@@ -41,6 +41,20 @@ const Sidebar = () => {
             <span className="font-medium text-sm">Bảng điều khiển</span>
           </NavLink>
 
+          {/* Link tới Khách hàng (Customers) */}
+          <NavLink to="/customers" className={navLinkClass}>
+            <span className="material-symbols-outlined">groups</span>
+            <span className="font-medium text-sm">Khách hàng</span>
+          </NavLink>
+
+          {/* Link tới Liên hệ (Contacts) */}
+          <NavLink to="/contacts" className={navLinkClass}>
+            <span className="material-symbols-outlined mr-3">
+              contact_phone
+            </span>
+            <span className="font-medium text-sm">Liên hệ</span>
+          </NavLink>
+
           {/* Link tới Khách hàng tiềm năng (Leads) */}
           <NavLink to="/leads" className={navLinkClass}>
             <span

@@ -3,6 +3,8 @@ import MainLayout from "./components/layout/MainLayout";
 import LeadPage from "./pages/leads/LeadPage";
 import LeadDetailPage from "./pages/leads/LeadDetailPage";
 import CampaignPage from "./pages/campaigns/CampaignPage";
+import CustomerPage from "./pages/customers/CustomerPage";
+import ContactPage from "./pages/contacts/ContactPage";
 
 function App() {
   return (
@@ -10,6 +12,8 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/leads" replace />} />
+          <Route path="/customers" element={<CustomerPage />} />
+          <Route path="/contacts" element={<ContactPage />} />
           <Route path="/leads" element={<LeadPage />} />
           <Route path="/leads/:id" element={<LeadDetailPage />} />
           <Route

@@ -3,7 +3,10 @@ package com.vti.crm.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+
+@org.hibernate.annotations.SQLRestriction("deleted_at IS NULL")
 @Entity
 @Table(name = "contacts")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -13,7 +16,6 @@ public class Contact {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // Khóa ngoại trỏ thẳng đến Customer Entity
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -38,4 +40,27 @@ public class Contact {
 
     @Column(name = "is_primary")
     private Boolean isPrimary = false;
+
+    // ==========================================
+    // AUDITING
+    // ==========================================
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

@@ -87,7 +87,7 @@ const CampaignFormModal = ({ isOpen, onClose, onSave, currentCampaign }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm p-4">
       <div className="bg-surface w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-surface-variant flex justify-between items-center bg-surface-container-lowest">

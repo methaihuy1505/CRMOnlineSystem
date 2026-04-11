@@ -18,9 +18,11 @@ public class LeadService {
     private final LeadRepository leadRepository;
     private final LeadStatusRepository leadStatusRepository;
     private final LeadInterestRepository leadInterestRepository;
-    private final CommunicationDetailRepository communicationDetailRepository;
     private final SourceRepository sourceRepository;
     private final CampaignRepository campaignRepository;
+
+    // Inject Shared Service
+    private final CommunicationService communicationService;
 
     @Transactional
     public LeadResponse createLead(LeadCreateRequest request) {
@@ -31,7 +33,15 @@ public class LeadService {
         Lead savedLead = mapAndSaveLeadInfo(request);
 
         saveLeadInterests(savedLead, request.getProductInterestIds());
-        saveCommunicationDetails(savedLead, request.getPhone(), request.getEmail());
+
+        // Gọi Shared Service thay vì viết lại logic
+        communicationService.saveComms(
+                savedLead.getId(),
+                CommunicationDetail.ParentType.LEAD,
+                request.getPhone(),
+                request.getEmail(),
+                null // Lead không có fax
+        );
 
         return mapToResponse(savedLead);
     }
@@ -42,6 +52,12 @@ public class LeadService {
                 .toList();
     }
 
+    public LeadResponse getLeadById(Integer id) {
+        Lead lead = leadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng tiềm năng với ID: " + id));
+        return mapToResponse(lead);
+    }
+
     @Transactional
     public LeadResponse updateLead(Integer id, LeadUpdateRequest request) {
         Lead updatedLead = findAndMapUpdateLeadInfo(id, request);
@@ -49,19 +65,16 @@ public class LeadService {
         leadInterestRepository.deleteByLeadId(id);
         saveLeadInterests(updatedLead, request.getProductInterestIds());
 
-        updateCommunicationDetails(updatedLead, request.getPhone(), request.getEmail());
+        // Gọi Shared Service thay vì viết lại logic
+        communicationService.updateComms(
+                updatedLead.getId(),
+                CommunicationDetail.ParentType.LEAD,
+                request.getPhone(),
+                request.getEmail(),
+                null // Lead không có fax
+        );
 
         return mapToResponse(updatedLead);
-    }
-
-    // Thêm hàm này vào class LeadService
-    public LeadResponse getLeadById(Integer id) {
-        // Tìm lead theo ID, nếu không thấy thì quăng lỗi Runtime
-        Lead lead = leadRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng tiềm năng với ID: " + id));
-
-        // Sử dụng hàm mapToResponse chuẩn Join bạn đã có để trả về DTO
-        return mapToResponse(lead);
     }
 
     @Transactional
@@ -70,16 +83,15 @@ public class LeadService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Lead với ID: " + id));
 
         existingLead.setDeletedAt(java.time.LocalDateTime.now());
-        // Cập nhật người xóa (chưa có entity user)
-        // existingLead.setUpdatedBy(currentUser.getId());
-
         leadRepository.save(existingLead);
     }
 
+    // =========================================================
+    // HELPER METHODS
+    // =========================================================
 
     private Lead mapAndSaveLeadInfo(LeadCreateRequest request) {
         Lead newLead = new Lead();
-        // Map thông tin cơ bản
         newLead.setFullName(request.getFullName());
         newLead.setCompanyName(request.getCompanyName());
         newLead.setPhone(request.getPhone());
@@ -91,7 +103,6 @@ public class LeadService {
         newLead.setExpectedRevenue(request.getExpectedRevenue());
         newLead.setDescription(request.getDescription());
 
-        // Map khóa ngoại qua Object (
         if (request.getSourceId() != null) {
             newLead.setSource(sourceRepository.getReferenceById(request.getSourceId()));
         }
@@ -113,7 +124,6 @@ public class LeadService {
         Lead existingLead = leadRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Lead với ID: " + id));
 
-        // --- Thông tin cơ bản ---
         existingLead.setFullName(request.getFullName());
         existingLead.setCompanyName(request.getCompanyName());
         existingLead.setPhone(request.getPhone());
@@ -125,33 +135,29 @@ public class LeadService {
         existingLead.setExpectedRevenue(request.getExpectedRevenue());
         existingLead.setDescription(request.getDescription());
 
-        // --- Cập nhật khóa ngoại qua Object (Proxy) ---
-        // Source
         if (request.getSourceId() != null) {
             existingLead.setSource(sourceRepository.getReferenceById(request.getSourceId()));
         } else {
             existingLead.setSource(null);
         }
 
-        // Campaign
         if (request.getCampaignId() != null) {
             existingLead.setCampaign(campaignRepository.getReferenceById(request.getCampaignId()));
         } else {
             existingLead.setCampaign(null);
         }
 
-        // Status
         if (request.getStatusId() != null) {
             existingLead.setStatus(leadStatusRepository.getReferenceById(request.getStatusId()));
         }
 
-        // Các ID khác
         existingLead.setProvinceId(request.getProvinceId());
         existingLead.setBranchId(request.getBranchId());
         existingLead.setAssignedTo(request.getAssignedTo());
 
         return leadRepository.save(existingLead);
     }
+
     private void saveLeadInterests(Lead lead, List<Integer> productIds) {
         if (productIds == null || productIds.isEmpty()) return;
         List<LeadInterest> interests = productIds.stream().map(productId -> {
@@ -161,54 +167,6 @@ public class LeadService {
             return interest;
         }).toList();
         leadInterestRepository.saveAll(interests);
-    }
-
-    private void saveCommunicationDetails(Lead lead, String phone, String email) {
-        if (phone != null && !phone.trim().isEmpty()) {
-            createNewCommDetail(lead, phone, CommunicationDetail.CommType.PHONE, "Số chính");
-        }
-        if (email != null && !email.trim().isEmpty()) {
-            createNewCommDetail(lead, email, CommunicationDetail.CommType.EMAIL, "Email chính");
-        }
-    }
-
-    private void updateCommunicationDetails(Lead lead, String newPhone, String newEmail) {
-        if (newPhone != null && !newPhone.trim().isEmpty()) {
-            handleCommUpdate(lead, newPhone, CommunicationDetail.CommType.PHONE, "Số chính", "Số phụ");
-        }
-        if (newEmail != null && !newEmail.trim().isEmpty()) {
-            handleCommUpdate(lead, newEmail, CommunicationDetail.CommType.EMAIL, "Email chính", "Email phụ");
-        }
-    }
-
-    private void handleCommUpdate(Lead lead, String newValue, CommunicationDetail.CommType type, String primaryLabel, String secondaryLabel) {
-        var currentPrimaryOpt = communicationDetailRepository.findByParentIdAndParentTypeAndCommTypeAndIsPrimaryTrue(
-                lead.getId(), CommunicationDetail.ParentType.LEAD, type
-        );
-
-        if (currentPrimaryOpt.isPresent()) {
-            CommunicationDetail currentPrimary = currentPrimaryOpt.get();
-            if (!currentPrimary.getCommValue().equals(newValue)) {
-                currentPrimary.setIsPrimary(false);
-                currentPrimary.setLabel(secondaryLabel);
-                communicationDetailRepository.save(currentPrimary);
-                createNewCommDetail(lead, newValue, type, primaryLabel);
-            }
-        } else {
-            createNewCommDetail(lead, newValue, type, primaryLabel);
-        }
-    }
-
-    private void createNewCommDetail(Lead lead, String value, CommunicationDetail.CommType type, String label) {
-        CommunicationDetail detail = new CommunicationDetail();
-        detail.setParentId(lead.getId());
-        detail.setParentType(CommunicationDetail.ParentType.LEAD);
-        detail.setCommType(type);
-        detail.setCommValue(value);
-        detail.setIsPrimary(true);
-        detail.setLabel(label);
-        detail.setStatus(CommunicationDetail.Status.ACTIVE);
-        communicationDetailRepository.save(detail);
     }
 
     private LeadResponse mapToResponse(Lead lead) {
@@ -227,17 +185,12 @@ public class LeadService {
                 .totalCalls(lead.getTotalCalls())
                 .totalEmails(lead.getTotalEmails())
                 .totalMeetings(lead.getTotalMeetings())
-
-                // Trả về cả ID và Tên cho FE (Lấy từ Object Join)
                 .sourceId(lead.getSource() != null ? lead.getSource().getId() : null)
                 .sourceName(lead.getSource() != null ? lead.getSource().getName() : "Tự nhiên")
-
                 .campaignId(lead.getCampaign() != null ? lead.getCampaign().getId() : null)
                 .campaignName(lead.getCampaign() != null ? lead.getCampaign().getName() : null)
-
                 .statusId(lead.getStatus() != null ? lead.getStatus().getId() : null)
                 .statusName(lead.getStatus() != null ? lead.getStatus().getName() : null)
-
                 .provinceId(lead.getProvinceId())
                 .branchId(lead.getBranchId())
                 .assignedTo(lead.getAssignedTo())
