@@ -1,0 +1,779 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Sales Opportunities | Aeon Intelligence</title>
+    <!-- Google Fonts: Manrope & Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Material Symbols Outlined -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed": "#000767",
+              "error-container": "#ffdad6",
+              "surface-variant": "#e1e3e4",
+              "on-secondary-container": "#00355c",
+              "on-surface-variant": "#454652",
+              "on-primary": "#ffffff",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#e17c5a",
+              "on-background": "#191c1d",
+              "secondary-container": "#33a0fd",
+              "surface-dim": "#d9dadb",
+              "surface-container-highest": "#e1e3e4",
+              primary: "#000666",
+              "on-secondary-fixed-variant": "#00497d",
+              "inverse-primary": "#bdc2ff",
+              "on-secondary-fixed": "#001d36",
+              background: "#f8f9fa",
+              "on-tertiary-fixed": "#390c00",
+              "tertiary-fixed": "#ffdbd0",
+              surface: "#f8f9fa",
+              outline: "#767683",
+              error: "#ba1a1a",
+              "on-error-container": "#93000a",
+              "on-tertiary": "#ffffff",
+              "primary-container": "#1a237e",
+              "primary-fixed": "#e0e0ff",
+              "surface-container-lowest": "#ffffff",
+              tertiary: "#380b00",
+              "on-secondary": "#ffffff",
+              "secondary-fixed-dim": "#9ecaff",
+              "outline-variant": "#c6c5d4",
+              "tertiary-fixed-dim": "#ffb59d",
+              "on-tertiary-fixed-variant": "#7b2e12",
+              "surface-container-low": "#f3f4f5",
+              "on-primary-fixed-variant": "#343d96",
+              "surface-tint": "#4c56af",
+              "inverse-surface": "#2e3132",
+              "surface-container": "#edeeef",
+              "on-surface": "#191c1d",
+              "on-primary-container": "#8690ee",
+              "surface-bright": "#f8f9fa",
+              "inverse-on-surface": "#f0f1f2",
+              secondary: "#0061a4",
+              "secondary-fixed": "#d1e4ff",
+              "surface-container-high": "#e7e8e9",
+              "tertiary-container": "#5c1800",
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Manrope", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 300,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .bg-primary-gradient {
+        background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+      }
+      /* No-line rule implementation */
+      .tonal-boundary {
+        box-shadow: none;
+        border: none;
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface">
+    <!-- Sidebar Navigation -->
+    <aside
+      class="h-screen w-64 fixed left-0 top-0 bg-slate-100 dark:bg-slate-900 flex flex-col py-6 gap-4 z-40"
+    >
+      <div class="px-6 mb-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-primary-gradient flex items-center justify-center text-white font-bold"
+          >
+            A
+          </div>
+          <div>
+            <p
+              class="text-blue-900 dark:text-blue-200 font-headline font-bold text-sm tracking-tight leading-none"
+            >
+              Global Pipeline
+            </p>
+            <p
+              class="text-[10px] text-slate-500 font-label tracking-widest uppercase mt-1"
+            >
+              Enterprise CRM
+            </p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a
+          class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 mx-2 hover:text-blue-600 hover:bg-white/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+          href="#"
+        >
+          <span class="material-symbols-outlined mr-3">dashboard</span>
+          <span class="font-label text-sm font-medium">Dashboard</span>
+        </a>
+        <a
+          class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 mx-2 hover:text-blue-600 hover:bg-white/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+          href="#"
+        >
+          <span class="material-symbols-outlined mr-3">group</span>
+          <span class="font-label text-sm font-medium">Leads</span>
+        </a>
+        <!-- Active State: Opportunities -->
+        <a
+          class="flex items-center px-6 py-3 bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-300 shadow-sm rounded-lg mx-2 scale-95 transition-transform font-semibold"
+          href="#"
+        >
+          <span class="material-symbols-outlined mr-3">account_tree</span>
+          <span class="font-label text-sm">Opportunities</span>
+        </a>
+        <a
+          class="flex items-center px-6 py-3 text-slate-600 dark:text-slate-400 mx-2 hover:text-blue-600 hover:bg-white/50 dark:hover:bg-slate-800/50 rounded-lg transition-all"
+          href="#"
+        >
+          <span class="material-symbols-outlined mr-3">analytics</span>
+          <span class="font-label text-sm font-medium">Reporting</span>
+        </a>
+      </nav>
+      <div class="px-4 mt-auto">
+        <button
+          class="w-full bg-primary-gradient text-white py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 font-medium text-sm hover:opacity-90 transition-opacity"
+        >
+          <span class="material-symbols-outlined text-lg">add</span>
+          New Opportunity
+        </button>
+      </div>
+      <div
+        class="mt-6 border-t border-slate-200 dark:border-slate-800 pt-4 space-y-1"
+      >
+        <a
+          class="flex items-center px-6 py-2 text-slate-500 hover:text-blue-600 text-xs font-label uppercase tracking-widest"
+          href="#"
+        >
+          <span class="material-symbols-outlined mr-3 text-lg">settings</span>
+          Settings
+        </a>
+        <a
+          class="flex items-center px-6 py-2 text-slate-500 hover:text-blue-600 text-xs font-label uppercase tracking-widest"
+          href="#"
+        >
+          <span class="material-symbols-outlined mr-3 text-lg">database</span>
+          Metadata
+        </a>
+      </div>
+    </aside>
+    <!-- Main Content Canvas -->
+    <main class="ml-64 min-h-screen">
+      <!-- Top App Bar -->
+      <header
+        class="w-full sticky top-0 z-30 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl flex justify-between items-center px-8 h-16 w-full"
+      >
+        <div class="flex items-center gap-4">
+          <h2
+            class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-100"
+          >
+            Aeon Intelligence
+          </h2>
+        </div>
+        <div class="flex-1 max-w-md mx-8">
+          <div class="relative group">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"
+              >search</span
+            >
+            <input
+              class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
+              placeholder="Search pipeline..."
+              type="text"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button
+            class="p-2 text-slate-500 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <button
+            class="p-2 text-slate-500 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+          >
+            <span class="material-symbols-outlined">settings</span>
+          </button>
+          <div
+            class="h-8 w-8 rounded-full overflow-hidden ml-2 ring-2 ring-white shadow-sm"
+          >
+            <img
+              alt="User Profile"
+              class="w-full h-full object-cover"
+              data-alt="professional portrait of a manager in a crisp blue shirt with a confident smile against a neutral studio background"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuClANoyXLTPlpflXBDL6JWcn8kdc_-AkrJgfgr5n8y-WzKj0G0_GJKFIrMOt7cRGsw49EVQcvh3ZA5fA_1TH4K7ldHTcTPX1CZnGLNcdTpYartQXpL75Q3DuSLnVVx4TMZTD1I6e_4wQsdNMrpbq6r-yob9ebdA1A6egrLNZTTdthZBDmOZGF-d_W2A4sYZKxlbXacYDSGdA1-zf1N1C9nh9P24fvcqZnl31RQHQAJX0bR0T-iKIG3FtU6Je7mNHm0_C0ITd2wSLxtQ"
+            />
+          </div>
+        </div>
+      </header>
+      <!-- Opportunity Dashboard Content -->
+      <div class="p-8 max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="flex justify-between items-end mb-10">
+          <div>
+            <nav
+              class="flex mb-2 text-xs font-label uppercase tracking-widest text-slate-400 gap-2"
+            >
+              <span>CRM</span>
+              <span>/</span>
+              <span class="text-primary font-bold">Pipeline</span>
+            </nav>
+            <h1 class="text-4xl font-extrabold text-on-surface tracking-tight">
+              Sales Opportunities
+            </h1>
+          </div>
+          <div class="flex gap-3">
+            <button
+              class="px-5 py-2.5 bg-surface-container-highest text-on-secondary-container rounded-lg font-medium text-sm hover:bg-surface-variant transition-colors flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-lg">filter_list</span>
+              Advanced Filters
+            </button>
+            <button
+              class="px-6 py-2.5 bg-primary-gradient text-white rounded-lg font-bold text-sm shadow-xl shadow-primary/10 hover:translate-y-[-1px] active:translate-y-[0px] transition-all flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-lg">add_circle</span>
+              Add New Opportunity
+            </button>
+          </div>
+        </div>
+        <!-- Stats Overview (Bento Style) -->
+        <div class="grid grid-cols-4 gap-6 mb-8">
+          <div
+            class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-primary"
+          >
+            <p
+              class="text-[10px] font-label uppercase tracking-widest text-slate-500 mb-1"
+            >
+              Total Pipeline
+            </p>
+            <p class="text-3xl font-headline font-bold text-on-surface">
+              $4.2M
+            </p>
+            <div
+              class="mt-4 flex items-center text-xs font-medium text-emerald-600"
+            >
+              <span class="material-symbols-outlined text-sm mr-1"
+                >trending_up</span
+              >
+              +12% vs last month
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+            <p
+              class="text-[10px] font-label uppercase tracking-widest text-slate-500 mb-1"
+            >
+              Active Leads
+            </p>
+            <p class="text-3xl font-headline font-bold text-on-surface">148</p>
+            <div
+              class="mt-4 flex items-center text-xs font-medium text-slate-400"
+            >
+              <span class="material-symbols-outlined text-sm mr-1">sync</span>
+              Updated 2h ago
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+            <p
+              class="text-[10px] font-label uppercase tracking-widest text-slate-500 mb-1"
+            >
+              Avg Deal Size
+            </p>
+            <p class="text-3xl font-headline font-bold text-on-surface">
+              $28.4k
+            </p>
+            <div
+              class="mt-4 flex items-center text-xs font-medium text-amber-600"
+            >
+              <span class="material-symbols-outlined text-sm mr-1"
+                >warning</span
+              >
+              Stable trend
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-lowest p-6 rounded-xl shadow-sm bg-gradient-to-br from-primary-container to-blue-900 text-white"
+          >
+            <p
+              class="text-[10px] font-label uppercase tracking-widest text-blue-200 mb-1"
+            >
+              Conversion Rate
+            </p>
+            <p class="text-3xl font-headline font-bold">24.8%</p>
+            <div
+              class="mt-4 flex items-center text-xs font-medium text-blue-100/80"
+            >
+              Top 5% in industry
+            </div>
+          </div>
+        </div>
+        <!-- Main Data Canvas -->
+        <div class="bg-surface-container-low rounded-2xl overflow-hidden p-1">
+          <div
+            class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden"
+          >
+            <!-- Table Search & Contextual Bar -->
+            <div
+              class="p-4 border-b border-surface-container-low flex items-center justify-between"
+            >
+              <div class="flex items-center gap-4">
+                <span
+                  class="text-xs font-label uppercase tracking-wider text-slate-500 bg-surface-container-low px-3 py-1 rounded-full"
+                  >Showing 1-10 of 148 items</span
+                >
+              </div>
+              <div class="flex gap-2">
+                <button
+                  class="p-2 text-slate-400 hover:text-primary transition-colors"
+                >
+                  <span class="material-symbols-outlined">sort_by_alpha</span>
+                </button>
+                <button
+                  class="p-2 text-slate-400 hover:text-primary transition-colors"
+                >
+                  <span class="material-symbols-outlined">file_download</span>
+                </button>
+              </div>
+            </div>
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-surface-container-low/50">
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500"
+                  >
+                    Code
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500"
+                  >
+                    Opportunity Name
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500"
+                  >
+                    Customer
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500"
+                  >
+                    Stage
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500 text-center"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500 text-right"
+                  >
+                    Total Amount
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500"
+                  >
+                    Exp. Close
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500"
+                  >
+                    Assigned
+                  </th>
+                  <th
+                    class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-slate-500 text-right"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-container-low">
+                <!-- Row 1 -->
+                <tr
+                  class="hover:bg-surface-container-low transition-colors group"
+                >
+                  <td class="px-6 py-4 text-xs font-mono text-slate-400">
+                    OPP-8842
+                  </td>
+                  <td
+                    class="px-6 py-4 font-headline text-sm font-semibold text-on-surface"
+                  >
+                    Cloud Migration Q3
+                  </td>
+                  <td
+                    class="px-6 py-4 text-sm text-on-surface-variant font-medium"
+                  >
+                    Horizon Systems
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="text-xs font-label font-medium px-2 py-1 bg-blue-100/50 text-blue-700 rounded"
+                      >Negotiation</span
+                    >
+                  </td>
+                  <td class="px-6 py-4 flex justify-center">
+                    <div
+                      class="flex items-center gap-2 bg-secondary-container/10 px-3 py-1 rounded-full border border-secondary-container/20"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-secondary"
+                      ></span>
+                      <span
+                        class="text-[10px] font-bold text-secondary uppercase tracking-tighter"
+                        >Active</span
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="px-6 py-4 text-right font-headline text-sm font-bold text-on-surface"
+                  >
+                    $145,000
+                  </td>
+                  <td class="px-6 py-4 text-xs text-on-surface-variant">
+                    Oct 14, 2024
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <img
+                        alt="Sarah J."
+                        class="w-6 h-6 rounded-full"
+                        data-alt="headshot of a male sales executive with dark hair and glasses in a professional studio setting"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAg6oLIijvwa2GOM6G5G8_NWvDUrQSH3cRiW2spjUcQBStEo4TMRTMTa09FKV56fZNkIV1m1H_7bfbArXWhFdq23pNpwv-n5SxBIyQBLcr-7VSwkxT4tVJASvFom4rp3FjbXTN0OVNphd-P3piYMJT7SXNnI8_v9L856547qxtXYmphylEcX2tT5LDlt0zcNyDj8AiqwysUuc_AblTt9s9ZeiEq89MXwF87W8dvoEb4Db9Zpky29_Wi-rAx0yrmZv0CruUEbvSZ2uwU"
+                      />
+                      <span class="text-xs font-medium">David Chen</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div
+                      class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <button
+                        class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-lg"
+                      >
+                        <span class="material-symbols-outlined text-lg"
+                          >edit</span
+                        >
+                      </button>
+                      <button
+                        class="p-2 text-slate-400 hover:text-error hover:bg-error-container/20 rounded-lg"
+                      >
+                        <span class="material-symbols-outlined text-lg"
+                          >delete</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- Row 2 -->
+                <tr
+                  class="hover:bg-surface-container-low transition-colors group"
+                >
+                  <td class="px-6 py-4 text-xs font-mono text-slate-400">
+                    OPP-9104
+                  </td>
+                  <td
+                    class="px-6 py-4 font-headline text-sm font-semibold text-on-surface"
+                  >
+                    AI Infrastructure Suite
+                  </td>
+                  <td
+                    class="px-6 py-4 text-sm text-on-surface-variant font-medium"
+                  >
+                    Nexa Dynamics
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="text-xs font-label font-medium px-2 py-1 bg-amber-100/50 text-amber-700 rounded"
+                      >Discovery</span
+                    >
+                  </td>
+                  <td class="px-6 py-4 flex justify-center">
+                    <div
+                      class="flex items-center gap-2 bg-secondary-container/10 px-3 py-1 rounded-full border border-secondary-container/20"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-secondary"
+                      ></span>
+                      <span
+                        class="text-[10px] font-bold text-secondary uppercase tracking-tighter"
+                        >Active</span
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="px-6 py-4 text-right font-headline text-sm font-bold text-on-surface"
+                  >
+                    $420,000
+                  </td>
+                  <td class="px-6 py-4 text-xs text-on-surface-variant">
+                    Nov 02, 2024
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <img
+                        alt="Sarah J."
+                        class="w-6 h-6 rounded-full"
+                        data-alt="smiling female professional with curly hair in a business casual blazer against an office background"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy5s0idzFjJz-1yVLQYoLqTp25zO4OW1Ol7e-eSUx7wiVCLmI14qmElKR16T3TIclva-AcQeYBtF-RfaPyT2eTeoW4tF_FFDYlQDvco6EpjHTpCFSEfjv9v4dUkkyPHOQWaS3Mnm8T3pIDvhPPiyqSKxLPdMCkD97JA03a3OvGEEhY1V9MWwd6buGqSmQdnaY0FWBKaUQc-G8K-J_oTaFyGFSc9kL_Lm2VHsMxVDex2jKe9zlC5Xr34dMrlKxx4I8j4VO39_3hUg7E"
+                      />
+                      <span class="text-xs font-medium">Sarah Jenkins</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div
+                      class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <button
+                        class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-lg"
+                      >
+                        <span class="material-symbols-outlined text-lg"
+                          >edit</span
+                        >
+                      </button>
+                      <button
+                        class="p-2 text-slate-400 hover:text-error hover:bg-error-container/20 rounded-lg"
+                      >
+                        <span class="material-symbols-outlined text-lg"
+                          >delete</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- Row 3 -->
+                <tr
+                  class="hover:bg-surface-container-low transition-colors group"
+                >
+                  <td class="px-6 py-4 text-xs font-mono text-slate-400">
+                    OPP-7721
+                  </td>
+                  <td
+                    class="px-6 py-4 font-headline text-sm font-semibold text-on-surface"
+                  >
+                    Network Overhaul
+                  </td>
+                  <td
+                    class="px-6 py-4 text-sm text-on-surface-variant font-medium"
+                  >
+                    Apex Logistics
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="text-xs font-label font-medium px-2 py-1 bg-emerald-100/50 text-emerald-700 rounded"
+                      >Closing</span
+                    >
+                  </td>
+                  <td class="px-6 py-4 flex justify-center">
+                    <div
+                      class="flex items-center gap-2 bg-tertiary-container/10 px-3 py-1 rounded-full border border-tertiary-container/20"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                      <span
+                        class="text-[10px] font-bold text-error uppercase tracking-tighter"
+                        >At Risk</span
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="px-6 py-4 text-right font-headline text-sm font-bold text-on-surface"
+                  >
+                    $89,200
+                  </td>
+                  <td class="px-6 py-4 text-xs text-on-surface-variant">
+                    Dec 22, 2024
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <img
+                        alt="Marcus L."
+                        class="w-6 h-6 rounded-full"
+                        data-alt="portrait of a bearded young man in a modern office wearing a tech-style polo shirt"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN-0pNx7jZQVEhidg6IFbMhbI0PjEFhnOrr2bJGL-iHQ9oGLFuF5ySF7tFfjfg6fOdrGPQbcqpFNmhM3igSwY2qBo0-CRZ4IDN4c6OnpIy5XP7ZVHvgD0McELKkk9b4jsmfNofJfnK9aGrbBZHBSQ_NrdLhWGg5BNxBCR-HrLTuJqJRIwnHsoWbBrD4byHmt_gO_UlyUsM-GyuZ544pPLbbSLOlAYUmI8EEq1YqO3PgcOE7l3W3mrAlic9jQ11V1R2_VgcRZIWAHRH"
+                      />
+                      <span class="text-xs font-medium">Marcus Leone</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div
+                      class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <button
+                        class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-lg"
+                      >
+                        <span class="material-symbols-outlined text-lg"
+                          >edit</span
+                        >
+                      </button>
+                      <button
+                        class="p-2 text-slate-400 hover:text-error hover:bg-error-container/20 rounded-lg"
+                      >
+                        <span class="material-symbols-outlined text-lg"
+                          >delete</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- Pagination -->
+            <div
+              class="p-6 flex items-center justify-between bg-surface-container-low/20"
+            >
+              <div class="flex items-center gap-4">
+                <label
+                  class="text-xs font-label font-semibold text-slate-500 uppercase tracking-widest"
+                  >Rows per page</label
+                >
+                <select
+                  class="bg-transparent border-none text-xs font-bold focus:ring-0"
+                >
+                  <option>10</option>
+                  <option>25</option>
+                  <option>50</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  class="p-2 text-slate-400 hover:bg-white rounded-lg transition-colors"
+                >
+                  <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold"
+                >
+                  1
+                </button>
+                <button
+                  class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 text-xs font-bold transition-colors"
+                >
+                  2
+                </button>
+                <button
+                  class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 text-xs font-bold transition-colors"
+                >
+                  3
+                </button>
+                <span class="px-2 text-slate-400">...</span>
+                <button
+                  class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 text-xs font-bold transition-colors"
+                >
+                  15
+                </button>
+                <button
+                  class="p-2 text-slate-400 hover:bg-white rounded-lg transition-colors"
+                >
+                  <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Contextual Insight / Empty State Pattern Mockup -->
+        <!-- In a real CRM, this could be a side panel. Here we use an asymmetric card below. -->
+        <div class="mt-12 flex gap-8 items-start">
+          <div
+            class="flex-1 bg-white/40 backdrop-blur-md p-8 rounded-3xl border border-white/50 relative overflow-hidden"
+          >
+            <div class="relative z-10">
+              <h3 class="text-lg font-headline font-bold text-blue-900 mb-2">
+                Quarterly Outlook
+              </h3>
+              <p class="text-sm text-on-surface-variant max-w-md mb-6">
+                You have 12 deals nearing the closing stage. Focus on Horizon
+                Systems to hit your bonus early this month.
+              </p>
+              <div class="flex gap-4">
+                <div
+                  class="h-2 w-full bg-slate-200 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-primary-gradient w-[65%]"></div>
+                </div>
+                <span class="text-xs font-bold text-primary shrink-0"
+                  >65% Target Met</span
+                >
+              </div>
+            </div>
+            <!-- Decorative background element -->
+            <div
+              class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"
+            ></div>
+          </div>
+          <!-- Empty State Context (Hidden by default, shown for empty search) -->
+          <div
+            class="hidden flex-1 flex-col items-center justify-center py-16 text-center"
+          >
+            <div
+              class="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mb-4"
+            >
+              <span class="material-symbols-outlined text-4xl text-slate-300"
+                >search_off</span
+              >
+            </div>
+            <h3 class="font-headline font-bold text-xl mb-2">
+              No opportunities found
+            </h3>
+            <p class="text-slate-500 text-sm max-w-xs">
+              We couldn't find any results matching your filters. Try adjusting
+              your search criteria or clear all filters.
+            </p>
+            <button
+              class="mt-6 text-primary font-bold text-sm underline underline-offset-4"
+            >
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- FAB (Floating Action Button) -->
+    <button
+      class="fixed bottom-8 right-8 w-14 h-14 bg-primary-gradient text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-50"
+    >
+      <span class="material-symbols-outlined text-2xl" data-weight="fill"
+        >add</span
+      >
+    </button>
+  </body>
+</html>

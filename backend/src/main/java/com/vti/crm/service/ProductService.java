@@ -14,6 +14,8 @@ import com.vti.crm.repository.ProductRepository;
 import com.vti.crm.repository.UomRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,37 +35,103 @@ public class ProductService {
     private final Cloudinary cloudinary;
 
     // ================= CREATE =================
-    public ProductResponse create(ProductRequest request,
-                                  List<MultipartFile> images) {
-
+    public ProductResponse create(ProductRequest request, List<MultipartFile> images) {
         validateDuplicateCode(request.getProductCode());
         Product product = mapToEntity(request);
+
+        // Lưu sản phẩm trước để có ID
         productRepository.save(product);
 
         if (images != null && !images.isEmpty()) {
-            saveImages(product, images);
+            // Lưu danh sách ảnh và lấy URL của ảnh đầu tiên
+            String firstImageUrl = saveImages(product, images);
+            // Cập nhật ảnh đại diện cho sản phẩm
+            product.setImageUrl(firstImageUrl);
+            productRepository.save(product);
         }
 
         return mapToResponse(product);
     }
 
     // ================= UPDATE =================
+    @Transactional
     public ProductResponse update(Integer id,
                                   ProductRequest request,
                                   List<MultipartFile> images) {
 
+        // 1. Tìm sản phẩm hiện tại
         Product product = findById(id);
+
+        // 2. Kiểm tra trùng mã sản phẩm
         validateDuplicateCodeForUpdate(id, request.getProductCode());
+
+        // 3. Cập nhật dữ liệu từ request
         mapForUpdate(product, request);
 
+        // 4. Xử lý ảnh nếu có
         if (images != null && !images.isEmpty()) {
-            productImageRepository.deleteByProductId(id);
-            saveImages(product, images);
+            replaceProductImages(product, images);
         }
 
-        return mapToResponse(productRepository.save(product));
+        // 5. Lưu và trả về kết quả
+        Product updatedProduct = productRepository.save(product);
+        return mapToResponse(updatedProduct);
     }
+    private void replaceProductImages(Product product,
+                                      List<MultipartFile> images) {
 
+        // 1. Lấy danh sách ảnh cũ
+        List<ProductImage> oldImages =
+                productImageRepository.findByProductId(product.getId());
+
+        // 2. Xóa ảnh trên Cloudinary
+        deleteImagesFromCloudinary(oldImages);
+
+        // 3. Xóa ảnh trong Database
+        productImageRepository.deleteByProductId(product.getId());
+
+        // 4. Lưu ảnh mới
+        String firstImageUrl = saveImages(product, images);
+
+        // 5. Cập nhật ảnh đại diện
+        product.setImageUrl(firstImageUrl);
+    }
+    private void deleteImagesFromCloudinary(List<ProductImage> images) {
+        for (ProductImage image : images) {
+            try {
+                String publicId = extractPublicId(image.getImageUrl());
+                if (publicId != null) {
+                    cloudinary.uploader().destroy(
+                            publicId,
+                            com.cloudinary.utils.ObjectUtils.emptyMap()
+                    );
+                }
+            } catch (Exception e) {
+//                log.error("Failed to delete image on Cloudinary: {}",
+//                        image.getImageUrl(), e);
+            }
+        }
+    }
+    private String extractPublicId(String url) {
+        try {
+            if (url == null || !url.contains("/upload/")) {
+                return null;
+            }
+
+            // Ví dụ URL:
+            // https://res.cloudinary.com/.../upload/v123456/crm/products/image.jpg
+            String temp = url.split("/upload/")[1];
+
+            // Loại bỏ version (v123456/)
+            temp = temp.substring(temp.indexOf("/") + 1);
+
+            // Loại bỏ phần mở rộng (.jpg, .png,...)
+            return temp.substring(0, temp.lastIndexOf("."));
+        } catch (Exception e) {
+//            log.error("Error extracting public_id from URL: {}", url, e);
+            return null;
+        }
+    }
     // ================= GET BY ID =================
     @Transactional(readOnly = true)
     public ProductResponse getById(Integer id) {
@@ -136,11 +204,15 @@ public class ProductService {
         product.setDescription(request.getDescription());
     }
 
-    private void saveImages(Product product, List<MultipartFile> files) {
+    private String saveImages(Product product, List<MultipartFile> files) {
+        String firstUrl = null;
         int index = 0;
         for (MultipartFile file : files) {
             validateFile(file);
             String url = uploadToCloudinary(file);
+
+            // Lưu lại URL của tấm hình đầu tiên
+            if (index == 0) firstUrl = url;
 
             ProductImage image = new ProductImage();
             image.setProduct(product);
@@ -149,6 +221,7 @@ public class ProductService {
 
             productImageRepository.save(image);
         }
+        return firstUrl; // Trả về để dùng làm ảnh đại diện
     }
 
     private String uploadToCloudinary(MultipartFile file) {

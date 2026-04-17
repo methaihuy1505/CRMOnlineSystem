@@ -2,10 +2,14 @@ package com.vti.crm.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity
 @Table(name = "opportunity_stages")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class OpportunityStage {
 
     @Id

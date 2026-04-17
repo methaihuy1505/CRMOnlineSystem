@@ -10,4 +10,7 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Inte
     List<ProductImage> findByProductIdOrderBySortOrderAsc(Integer productId);
 
     void deleteByProductId(Integer productId);
+
+    // Lấy danh sách ảnh theo Product ID
+    List<ProductImage> findByProductId(Integer productId);
 }

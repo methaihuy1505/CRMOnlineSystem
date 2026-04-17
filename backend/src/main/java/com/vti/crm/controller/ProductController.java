@@ -3,7 +3,6 @@ package com.vti.crm.controller;
 import com.vti.crm.dto.request.ProductRequest;
 import com.vti.crm.dto.response.ProductResponse;
 import com.vti.crm.service.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -19,7 +18,6 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ObjectMapper objectMapper;
 
     // ================= CREATE (JSON ONLY) =================
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -31,12 +29,8 @@ public class ProductController {
     // ================= CREATE (MULTIPART WITH IMAGES) =================
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ProductResponse createMultipart(
-            @RequestPart("product") String productJson,
-            @RequestPart(value = "images", required = false)
-            List<MultipartFile> images) throws IOException {
-
-        ProductRequest request =
-                objectMapper.readValue(productJson, ProductRequest.class);
+            @Valid @RequestPart("product") ProductRequest request, // Spring tự convert chỗ này
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
         return productService.create(request, images);
     }
@@ -45,12 +39,8 @@ public class ProductController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ProductResponse update(
             @PathVariable Integer id,
-            @RequestPart("product") String productJson,
-            @RequestPart(value = "images", required = false)
-            List<MultipartFile> images) throws IOException {
-
-        ProductRequest request =
-                objectMapper.readValue(productJson, ProductRequest.class);
+            @Valid @RequestPart("product") ProductRequest request, // Spring tự convert chỗ này
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
         return productService.update(id, request, images);
     }
@@ -72,4 +62,7 @@ public class ProductController {
     public void delete(@PathVariable Integer id) {
         productService.delete(id);
     }
+
+
+
 }
